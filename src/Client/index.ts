@@ -206,7 +206,14 @@ class TexasScheduler {
         const myDates = this.config.location.specificDates;
         // Check if empty array OR array with only empty strings
         if (!myDates?.length || myDates.every(date => !date.trim())) return true;
-        const matchedDate = myDates.find(date => date && availableBookinDate.includes(date));
+
+        const availableDate = dayjs(availableBookinDate);
+        const matchedDate = myDates.find(date => {
+            if (!date.trim()) return false;
+            const preferredDate = dayjs(date, 'MM/DD/YYYY');
+            return availableDate.isSame(preferredDate, 'day');
+        });
+
         if (matchedDate) {
             console.log(`Available date ${availableBookinDate} matches with preferred date ${matchedDate}`);
         }
